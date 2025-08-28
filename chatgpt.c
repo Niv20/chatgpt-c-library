@@ -303,6 +303,8 @@ ChatGPTConversation *chatgpt_conversation_new(const char *api_key, const char *m
     c->temperature = 0.7;       // Balanced creativity
     c->top_p = 1.0;            // No nucleus sampling by default
     c->max_tokens = 0;         // No token limit by default
+    c->presence_penalty = 0.0;  // No presence penalty by default
+    c->frequency_penalty = 0.0; // No frequency penalty by default
     
     // Set new default parameters
     c->use_streaming = 1;      // Streaming enabled by default
@@ -376,6 +378,8 @@ int chatgpt_conversation_copy_settings(ChatGPTConversation *dest, const ChatGPTC
     dest->temperature = src->temperature;
     dest->top_p = src->top_p;
     dest->max_tokens = src->max_tokens;
+    dest->presence_penalty = src->presence_penalty;
+    dest->frequency_penalty = src->frequency_penalty;
     dest->use_streaming = src->use_streaming;
     dest->context_messages = src->context_messages;
     dest->max_retries = src->max_retries;
@@ -514,6 +518,54 @@ int chatgpt_set_top_p(ChatGPTConversation *c, double v) {
     if (v <= 0 || v > 1) return CHATGPT_ERR_INVALID_ARG;
     
     c->top_p = v;
+    return CHATGPT_OK;
+}
+
+/*
+ * Set the presence penalty parameter
+ * Range: -2.0 to 2.0 (default: 0.0)
+ * Positive values penalize tokens that have already appeared in the text so far,
+ * encouraging the model to introduce new topics and avoid repetition.
+ * - 0.0: No penalty (default)
+ * - Positive values: Discourage repetition of topics/words that already appeared
+ * - Negative values: Encourage repetition of topics/words that already appeared
+ * 
+ * Key behavior: Penalizes ANY occurrence of a word/topic that already appeared.
+ * If a word appeared once, the model will be "reluctant" to repeat it.
+ * This causes the model to introduce new ideas to the text.
+ * 
+ * Usage: chatgpt_set_presence_penalty(conversation, 0.6); // Encourage diverse content
+ * Returns: CHATGPT_OK on success, error code on failure
+ */
+int chatgpt_set_presence_penalty(ChatGPTConversation *c, double v) {
+    if (!c) return CHATGPT_ERR_INVALID_ARG;
+    if (v < -2.0 || v > 2.0) return CHATGPT_ERR_INVALID_ARG;
+    
+    c->presence_penalty = v;
+    return CHATGPT_OK;
+}
+
+/*
+ * Set the frequency penalty parameter  
+ * Range: -2.0 to 2.0 (default: 0.0)
+ * Positive values penalize tokens based on their frequency in the text so far,
+ * with higher penalties for more frequently used words.
+ * - 0.0: No penalty (default)
+ * - Positive values: Reduce repetitive word usage proportionally to frequency
+ * - Negative values: Encourage repetitive word usage proportionally to frequency
+ * 
+ * Key behavior: Penalizes repetition based on HOW MANY TIMES it occurred.
+ * If a word repeats many times, the penalty grows.
+ * This doesn't prevent repetition completely, but spreads word usage more evenly.
+ * 
+ * Usage: chatgpt_set_frequency_penalty(conversation, 0.3); // Reduce word repetition
+ * Returns: CHATGPT_OK on success, error code on failure
+ */
+int chatgpt_set_frequency_penalty(ChatGPTConversation *c, double v) {
+    if (!c) return CHATGPT_ERR_INVALID_ARG;
+    if (v < -2.0 || v > 2.0) return CHATGPT_ERR_INVALID_ARG;
+    
+    c->frequency_penalty = v;
     return CHATGPT_OK;
 }
 
@@ -1016,6 +1068,14 @@ static char *build_request_body(ChatGPTClient *c, int stream) {
     // Add generation parameters
     cJSON_AddNumberToObject(root, "temperature", c->temperature);
     cJSON_AddNumberToObject(root, "top_p", c->top_p);
+    
+    // Add penalty parameters if they are not default (0.0)
+    if (c->presence_penalty != 0.0) {
+        cJSON_AddNumberToObject(root, "presence_penalty", c->presence_penalty);
+    }
+    if (c->frequency_penalty != 0.0) {
+        cJSON_AddNumberToObject(root, "frequency_penalty", c->frequency_penalty);
+    }
     
     // Add max_tokens if specified (0 means don't include it)
     if (c->max_tokens > 0) {

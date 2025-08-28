@@ -80,6 +80,8 @@ typedef struct ChatGPTConversation {
     double temperature;         // Creativity/randomness (0.0 to 2.0)
     double top_p;              // Nucleus sampling parameter (0.0 to 1.0)
     int max_tokens;            // Maximum tokens for completion (0 = no limit)
+    double presence_penalty;    // Penalty for token presence (-2.0 to 2.0)
+    double frequency_penalty;   // Penalty for token frequency (-2.0 to 2.0)
     char *base_url;            // API base URL (for custom endpoints)
     
     // New streaming and context configuration
@@ -209,6 +211,30 @@ int chatgpt_set_temperature(ChatGPTConversation *conversation, double temperatur
  * Range: 0.0 to 1.0 (controls diversity of token selection)
  */
 int chatgpt_set_top_p(ChatGPTConversation *conversation, double top_p);
+
+/**
+ * Set the presence penalty parameter
+ * Range: -2.0 to 2.0 (default: 0.0)
+ * Positive values penalize tokens that have already appeared in the text so far,
+ * encouraging the model to introduce new topics and avoid repetition.
+ * - 0.0: No penalty (default)
+ * - Positive values: Discourage repetition of topics/words that already appeared
+ * - Negative values: Encourage repetition of topics/words that already appeared
+ * Use Case: Set to positive value (e.g., 0.6) to encourage diverse, creative content
+ */
+int chatgpt_set_presence_penalty(ChatGPTConversation *conversation, double presence_penalty);
+
+/**
+ * Set the frequency penalty parameter  
+ * Range: -2.0 to 2.0 (default: 0.0)
+ * Positive values penalize tokens based on their frequency in the text so far,
+ * with higher penalties for more frequently used words.
+ * - 0.0: No penalty (default)
+ * - Positive values: Reduce repetitive word usage proportionally to frequency
+ * - Negative values: Encourage repetitive word usage proportionally to frequency
+ * Use Case: Set to positive value (e.g., 0.3) to reduce word repetition while allowing natural flow
+ */
+int chatgpt_set_frequency_penalty(ChatGPTConversation *conversation, double frequency_penalty);
 
 /**
  * Set maximum tokens for the completion
