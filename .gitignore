@@ -1,0 +1,156 @@
+# Compiled Object files
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# Build directories
+build/
+bin/
+obj/
+debug/
+release/
+dist/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Autotools
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.guess
+config.h.in
+config.log
+config.status
+config.sub
+configure
+depcomp
+install-sh
+ltmain.sh
+missing
+stamp-h1
+
+# IDE files
+.vscode/
+.vs/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Code::Blocks
+*.depend
+*.layout
+*.cbp
+
+# Dev-C++
+*.dev
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+
+# CLion
+.idea/
+cmake-build-*/
+
+# Temporary files
+*~
+*.swp
+*.swo
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Test files and outputs
+test_output/
+*.test
+test_*
+tests/output/
+
+# Documentation generated files
+docs/html/
+docs/latex/
+*.pdf
+
+# Package files
+*.tar.gz
+*.zip
+*.7z
+
+# Core dumps
+core
+core.*
+
+# Valgrind
+*.valgrind
+vgcore.*
+
+# gcov coverage files
+*.gcno
+*.gcda
+*.gcov
+
+# Profiling
+gmon.out
+
+# Static analysis
+cppcheck-results.xml
+scan-build/
+
+# Package manager files
+conan.lock
+vcpkg_installed/
+
+# Demo executable (if you build one)
+demo
+chatgpt_demo
+example
+
+# Local configuration files
+.env
+config.local
